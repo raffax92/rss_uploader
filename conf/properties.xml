@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<configuration>
+	<properties>
+		<apiKey>API_KEY</apiKey>
+		<xmlPath>XML_PATH</xmlPath>
+	</properties>
+	<types>
+		<type>
+			<nome>Zoo Settimana</nome>
+			<maskTitle>Zoo-#DD#-#MM#-#YYYY#-S@m</maskTitle>
+			<maskDescription>Zoo-#DAY#,#DD#-#MM#-#YYYY#-S@m.mp3</maskDescription>
+		</type>
+		<type>
+			<nome>Zoo Compilation</nome>
+			<maskTitle>Zoo-#DD#-#MM#-#YYYY#-Compilation-S@m</maskTitle>
+			<maskDescription>Zoo-#DAY#,#DD#-#MM#-#YYYY#-Compilation-S@m.mp3</maskDescription>
+		</type>
+		<type>
+			<nome>Polaroid</nome>
+			<maskTitle>105 Polaroyd #DD#-#MM#-#YYYY#-S@m</maskTitle>
+			<maskDescription>105 Polaroyd #DD#-#MM#-#YYYY#-S@m.mp3</maskDescription>
+		</type>
+		<type>
+			<nome>Detox</nome>
+			<maskTitle>105 Detox (#DD#/#MM#/#YYYY#) Link Temporaneo</maskTitle>
+			<maskDescription>105 Detox,#DAY# #DD#-#MM#-#YYYY#.mp3, mixato creato da Marco Mazzoli - Link Temporaneo</maskDescription>
+		</type>
+	</types>
+	<mime>
+		<file_type>
+			<description>Audio mp3</description>
+			<value>audio/mpeg</value>
+			<def_length>100123123</def_length>
+		</file_type>
+		<file_type>
+			<description>Audio m4a</description>
+			<value>audio/m4a</value>
+			<def_length>100123123</def_length>
+		</file_type>
+		<file_type>
+			<description>Video</description>
+			<value>video/mp4</value>
+			<def_length>0</def_length>
+		</file_type>
+		<file_type>
+			<description>Txt</description>
+			<value>text/plain</value>
+			<def_length>0</def_length>
+		</file_type>
+	</mime>
+</configuration>
