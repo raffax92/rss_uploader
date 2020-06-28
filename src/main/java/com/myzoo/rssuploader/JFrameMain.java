@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Vector;
+import javax.swing.JOptionPane;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -62,6 +63,7 @@ public class JFrameMain extends javax.swing.JFrame {
     DbxClientV2 client;
     
     Vector<HashMap<String,Object>> itemTypes;
+    Vector<HashMap<String,Object>> mimeTypes;
     
     public static final Logger LOGGER = LogManager.getLogger("");
 
@@ -86,11 +88,9 @@ public class JFrameMain extends javax.swing.JFrame {
             for (Metadata metadata : result.getEntries()) {
                 System.out.println(metadata.getPathDisplay());
             }
-
             if (!result.getHasMore()) {
                 break;
             }
-
             result = client.files().listFolderContinue(result.getCursor());
         }
         
@@ -115,6 +115,26 @@ public class JFrameMain extends javax.swing.JFrame {
             
             itemTypes.add(type);
             jComboBoxType.addItem(sub.getString("nome"));
+        }
+        
+        //Caricamento combobox preimpostati
+        mimeTypes = new Vector<>();   
+        HashMap<String,Object> mime = new HashMap<>();
+        mime.put("VALUE",       "");
+        mime.put("DESCRIPTION", "");
+        mime.put("DEF_LENGTH",  "");
+        mimeTypes.add(mime);
+        jComboBoxMimeType.addItem("");
+        
+        fields = xmlConfig.configurationsAt("mime.file_type");
+        for(HierarchicalConfiguration sub : fields) {
+            mime = new HashMap<>();
+            mime.put("VALUE",       sub.getString("value"));
+            mime.put("DESCRIPTION", sub.getString("description"));
+            mime.put("DEF_LENGTH",  sub.getString("def_length"));
+            
+            mimeTypes.add(mime);
+            jComboBoxMimeType.addItem(sub.getString("description"));
         }
         
     }
@@ -142,6 +162,10 @@ public class JFrameMain extends javax.swing.JFrame {
         jScrollPane2 = new javax.swing.JScrollPane();
         jTextAreaLink = new javax.swing.JTextArea();
         jTextFieldGUID = new javax.swing.JTextField();
+        jComboBoxMimeType = new javax.swing.JComboBox<>();
+        jTextFieldLength = new javax.swing.JTextField();
+        jLabel6 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -198,6 +222,21 @@ public class JFrameMain extends javax.swing.JFrame {
 
         jTextFieldGUID.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
 
+        jComboBoxMimeType.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jComboBoxMimeType.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBoxMimeTypeActionPerformed(evt);
+            }
+        });
+
+        jTextFieldLength.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+
+        jLabel6.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jLabel6.setText("Tipo File");
+
+        jLabel7.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jLabel7.setText("Lungh.");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -213,20 +252,24 @@ public class JFrameMain extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jComboBoxType, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jTextFieldTitolo, javax.swing.GroupLayout.Alignment.TRAILING)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jButtonConferma, javax.swing.GroupLayout.PREFERRED_SIZE, 188, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel4)
                             .addComponent(jLabel5)
-                            .addComponent(jLabel3))
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel6)
+                            .addComponent(jLabel7))
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jTextFieldLength, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jComboBoxMimeType, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jTextFieldGUID, javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jCheckBoxPermaLink, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 302, Short.MAX_VALUE)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jButtonConferma, javax.swing.GroupLayout.PREFERRED_SIZE, 188, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 312, Short.MAX_VALUE)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -254,9 +297,17 @@ public class JFrameMain extends javax.swing.JFrame {
                     .addComponent(jCheckBoxPermaLink))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jTextFieldGUID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jComboBoxMimeType)
+                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jTextFieldLength, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(39, 39, 39)
                 .addComponent(jButtonConferma, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         pack();
@@ -266,6 +317,11 @@ public class JFrameMain extends javax.swing.JFrame {
         try{            
             Date date = Calendar.getInstance().getTime();
             String strDate = (new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss XX", new Locale("en", "EN"))).format(date);
+            
+            if (mimeTypes.get(jComboBoxMimeType.getSelectedIndex()).get("VALUE") == null){
+                JOptionPane.showMessageDialog(null, "Impostare il tipo di file");
+                return;
+            }
             
             //Download del file da Dropbox
             OutputStream outputStream = new FileOutputStream(fileName);
@@ -297,7 +353,7 @@ public class JFrameMain extends javax.swing.JFrame {
             
             NodeList nodeItems = documentElement.getElementsByTagName("item");
             NodeList nodeRadio;
-
+            
             //Aggiornamento data ZooTV
             nodeRadio =  nodeItems.item(0).getChildNodes();
             for(int i = 0; i < nodeRadio.getLength(); i++){
@@ -315,7 +371,7 @@ public class JFrameMain extends javax.swing.JFrame {
                     break;
                 }
             }
-            
+
             //Aggiornamento data Radio105
             nodeRadio =  nodeItems.item(2).getChildNodes();
             for(int i = 0; i < nodeRadio.getLength(); i++){
@@ -354,8 +410,8 @@ public class JFrameMain extends javax.swing.JFrame {
             }
             guidElement.setTextContent(jTextFieldGUID.getText());
 
-            enclosureElement.setAttribute("length", "104857600");
-            enclosureElement.setAttribute("type", "audio/mpeg");
+            enclosureElement.setAttribute("length", jTextFieldLength.getText());
+            enclosureElement.setAttribute("type", mimeTypes.get(jComboBoxMimeType.getSelectedIndex()).get("VALUE").toString());
             enclosureElement.setAttribute("url", jTextAreaLink.getText());
 
             Element itemNode = document.createElement("item");
@@ -432,20 +488,34 @@ public class JFrameMain extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jCheckBoxPermaLinkActionPerformed
 
+    private void jComboBoxMimeTypeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxMimeTypeActionPerformed
+        HashMap<String,Object> value = mimeTypes.get(jComboBoxMimeType.getSelectedIndex());
+        
+        if ( !value.get("VALUE").equals("") ){
+            jTextFieldLength.setText(value.get("DEF_LENGTH").toString());
+        } else {
+            jTextFieldLength.setText("");
+        }
+    }//GEN-LAST:event_jComboBoxMimeTypeActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonConferma;
     private javax.swing.JCheckBox jCheckBoxPermaLink;
+    private javax.swing.JComboBox<String> jComboBoxMimeType;
     private javax.swing.JComboBox<String> jComboBoxType;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextArea jTextAreaDescrizione;
     private javax.swing.JTextArea jTextAreaLink;
     private javax.swing.JTextField jTextFieldGUID;
+    private javax.swing.JTextField jTextFieldLength;
     private javax.swing.JTextField jTextFieldTitolo;
     // End of variables declaration//GEN-END:variables
 }
