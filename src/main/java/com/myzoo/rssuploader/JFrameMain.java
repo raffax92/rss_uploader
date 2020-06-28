@@ -297,11 +297,10 @@ public class JFrameMain extends javax.swing.JFrame {
             
             NodeList nodeItems = documentElement.getElementsByTagName("item");
             NodeList nodeRadio;
-            
-            //Aggiornamento data Radio105
+
+            //Aggiornamento data ZooTV
             nodeRadio =  nodeItems.item(0).getChildNodes();
             for(int i = 0; i < nodeRadio.getLength(); i++){
-                Node type = nodeRadio.item(i);
                 if (nodeRadio.item(i).getNodeName().compareTo("pubDate") == 0){
                     nodeRadio.item(i).setTextContent(strDate);
                     break;
@@ -311,7 +310,15 @@ public class JFrameMain extends javax.swing.JFrame {
             //Aggiornamento data ZooRadio
             nodeRadio =  nodeItems.item(1).getChildNodes();
             for(int i = 0; i < nodeRadio.getLength(); i++){
-                Node type = nodeRadio.item(i);
+                if (nodeRadio.item(i).getNodeName().compareTo("pubDate") == 0){
+                    nodeRadio.item(i).setTextContent(strDate);
+                    break;
+                }
+            }
+            
+            //Aggiornamento data Radio105
+            nodeRadio =  nodeItems.item(2).getChildNodes();
+            for(int i = 0; i < nodeRadio.getLength(); i++){
                 if (nodeRadio.item(i).getNodeName().compareTo("pubDate") == 0){
                     nodeRadio.item(i).setTextContent(strDate);
                     break;
@@ -361,7 +368,7 @@ public class JFrameMain extends javax.swing.JFrame {
             itemNode.appendChild(enclosureElement);            
             
             //Posizionamento del nodo tra il 2o e il 3o ITEM
-            documentElement.getElementsByTagName("channel").item(0).insertBefore(itemNode, nodeItems.item(2));
+            documentElement.getElementsByTagName("channel").item(0).insertBefore(itemNode, nodeItems.item(3));
 
             //Creazione del file XML
             Transformer tFormer = TransformerFactory.newInstance().newTransformer();
