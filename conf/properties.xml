@@ -2,6 +2,7 @@
 <configuration>
 	<properties>
 		<apiKey>API_KEY</apiKey>
+		<secretKey>SECRET_KEY</secretKey>
 		<xmlPath>XML_PATH</xmlPath>
 	</properties>
 	<types>

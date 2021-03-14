@@ -6,6 +6,7 @@
 package com.myzoo.rssuploader;
 
 import com.dropbox.core.DbxException;
+import com.dropbox.core.json.JsonReader;
 import java.io.IOException;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 
@@ -15,7 +16,6 @@ import org.apache.commons.configuration2.ex.ConfigurationException;
  */
 public class Main {
     
-    public static String apiKey, xmlPath;
     private static JFrameMain jFrameMain;
 
     public static void main(String[] args) throws ConfigurationException, DbxException, IOException {

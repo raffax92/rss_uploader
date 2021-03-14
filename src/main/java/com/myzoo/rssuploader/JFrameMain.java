@@ -5,6 +5,8 @@
  */
 package com.myzoo.rssuploader;
 
+import com.dropbox.core.DbxAppInfo;
+import com.dropbox.core.DbxAuthFinish;
 import com.dropbox.core.DbxException;
 import com.dropbox.core.DbxRequestConfig;
 import com.dropbox.core.v2.DbxClientV2;
@@ -12,11 +14,8 @@ import com.dropbox.core.v2.files.FileMetadata;
 import com.dropbox.core.v2.files.ListFolderResult;
 import com.dropbox.core.v2.files.Metadata;
 import com.dropbox.core.v2.files.WriteMode;
-import static com.myzoo.rssuploader.Main.apiKey;
-import static com.myzoo.rssuploader.Main.xmlPath;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -62,6 +61,8 @@ public class JFrameMain extends javax.swing.JFrame {
     String fileName;
     DbxClientV2 client;
     
+    String apiKey, secretKey, xmlPath;
+    
     Vector<HashMap<String,Object>> itemTypes;
     Vector<HashMap<String,Object>> mimeTypes;
     
@@ -69,18 +70,51 @@ public class JFrameMain extends javax.swing.JFrame {
 
     /**
      * Creates new form JFrameMain
+     * @throws org.apache.commons.configuration2.ex.ConfigurationException
+     * @throws com.dropbox.core.DbxException
      */
-    public JFrameMain() throws ConfigurationException, FileNotFoundException, DbxException, IOException {
+    public JFrameMain() throws ConfigurationException, DbxException, IOException {
         initComponents();
         
         XMLConfiguration xmlConfig = new Configurations().xml("conf/properties.xml");
         
-        apiKey = xmlConfig.configurationsAt("properties").get(0).getString("apiKey");
-        xmlPath = xmlConfig.configurationsAt("properties").get(0).getString("xmlPath");
+        apiKey    = xmlConfig.configurationsAt("properties").get(0).getString("apiKey");
+        secretKey = xmlConfig.configurationsAt("properties").get(0).getString("secretKey");
+        xmlPath   = xmlConfig.configurationsAt("properties").get(0).getString("xmlPath");
+
+        // Read app info file (contains app key and app secret)
+        DbxAppInfo appInfo = new DbxAppInfo(apiKey, secretKey);
+
+        // Run through Dropbox API authorization process
+        DbxAuthFinish authFinish = null;
+
+        authFinish = new ShortLiveTokenAuthorize().authorize(appInfo, this);
+
+        System.out.println("Authorization complete.");
+        System.out.println("- User ID: " + authFinish.getUserId());
+        System.out.println("- Account ID: " + authFinish.getAccountId());
+        System.out.println("- Access Token: " + authFinish.getAccessToken());
+        System.out.println("- Expires At: " + authFinish.getExpiresAt());
+        System.out.println("- Refresh Token: " + authFinish.getRefreshToken());
+
+        // Save auth information the new DbxCredential instance. It also contains app_key and
+        // app_secret which is required to do refresh call.
+        /*DbxCredential credential = new DbxCredential(authFinish.getAccessToken(), authFinish
+            .getExpiresAt(), authFinish.getRefreshToken(), appInfo.getKey(), appInfo.getSecret());
+        File output = new File(argAuthFileOutput);
+        try {
+            DbxCredential.Writer.writeToFile(credential, output);
+            System.out.println("Saved authorization information to \"" + output.getCanonicalPath() + "\".");
+        } catch (IOException ex) {
+            System.err.println("Error saving to <auth-file-out>: " + ex.getMessage());
+            System.err.println("Dumping to stderr instead:");
+            DbxCredential.Writer.writeToStream(credential, System.err);
+            System.exit(1); return;
+        }*/
         
         //Apertura account Dropbox
         DbxRequestConfig config = DbxRequestConfig.newBuilder("dropbox/java-tutorial").build();
-        client = new DbxClientV2(config, apiKey);
+        client = new DbxClientV2(config, authFinish.getAccessToken());
         
         // Get files and folder metadata from Dropbox root directory
         ListFolderResult result = client.files().listFolder("");
