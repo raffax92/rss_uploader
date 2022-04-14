@@ -380,6 +380,15 @@ public class JFrameMain extends javax.swing.JFrame {
                     break;
                 }
             }
+
+            //Aggiornamento data DetoxRadio
+            nodeRadio =  nodeItems.item(3).getChildNodes();
+            for(int i = 0; i < nodeRadio.getLength(); i++){
+                if (nodeRadio.item(i).getNodeName().compareTo("pubDate") == 0){
+                    nodeRadio.item(i).setTextContent(strDate);
+                    break;
+                }
+            }
             
             //Creazione nuovo nodo
             /*<item>
@@ -424,7 +433,7 @@ public class JFrameMain extends javax.swing.JFrame {
             itemNode.appendChild(enclosureElement);            
             
             //Posizionamento del nodo tra il 2o e il 3o ITEM
-            documentElement.getElementsByTagName("channel").item(0).insertBefore(itemNode, nodeItems.item(3));
+            documentElement.getElementsByTagName("channel").item(0).insertBefore(itemNode, nodeItems.item(4));
 
             //Creazione del file XML
             Transformer tFormer = TransformerFactory.newInstance().newTransformer();
