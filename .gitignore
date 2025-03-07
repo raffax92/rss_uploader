@@ -2,3 +2,5 @@
 /xml
 /log
 /conf/properties.xml
+/.idea
+/conf

@@ -16,11 +16,10 @@ import org.apache.commons.configuration2.ex.ConfigurationException;
 public class Main {
     
     public static String apiKey, xmlPath;
-    private static JFrameMain jFrameMain;
 
     public static void main(String[] args) throws ConfigurationException, DbxException, IOException {
-        
-        jFrameMain = new JFrameMain();
+
+        JFrameMain jFrameMain = new JFrameMain();
         jFrameMain.requestFocusInWindow();
         jFrameMain.setVisible(true);
         jFrameMain.toFront();

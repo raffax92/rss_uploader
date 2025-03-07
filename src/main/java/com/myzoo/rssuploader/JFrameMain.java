@@ -65,7 +65,7 @@ public class JFrameMain extends javax.swing.JFrame {
     Vector<HashMap<String,Object>> itemTypes;
     Vector<HashMap<String,Object>> mimeTypes;
     
-    public static final Logger LOGGER = LogManager.getLogger("");
+    public static final Logger LOGGER = LogManager.getLogger("Main");
 
     /**
      * Creates new form JFrameMain
